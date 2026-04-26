@@ -29,8 +29,8 @@ export function Navbar() {
       scrolled || open ? 'bg-kraft-light/95 backdrop-blur-md border-b-2 border-mocha py-3' : 'bg-transparent border-b-2 border-transparent py-5'
     }`}>
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 lg:px-10">
-        <Link to="/" className="flex items-center">
-          <img src={logoImg} alt="Buatt" className="h-7 w-auto object-contain" />
+        <Link to="/" className="flex items-center overflow-hidden" style={{ height: '48px' }}>
+          <img src={logoImg} alt="Buatt" className="w-48 brightness-0" style={{ marginTop: '-30%', marginBottom: '-30%', height: 'auto', maxHeight: 'none' }} />
         </Link>
         <div className="hidden md:flex items-center gap-8">
           {links.map(l => (

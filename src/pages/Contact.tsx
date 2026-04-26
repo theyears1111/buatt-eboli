@@ -1,17 +1,54 @@
-import { Clock, Mail, MapPin, Phone, Send } from "lucide-react";
-import { useState } from "react";
+import { Clock, MapPin, Phone, Send } from "lucide-react";
+import { useRef } from "react";
 import posterPrenota from "../assets/poster-prenota.jpg";
 
+const WHATSAPP_NUMBER = "393341906133"; // +39 334 190 6133 — senza spazi o +
 
 const hours = [
-  { d: "Lunedì", h: "Chiuso" },
+  { d: "Lunedì",    h: "Chiuso" },
   { d: "Mar – Gio", h: "18:30 – 00:00" },
   { d: "Ven – Sab", h: "18:30 – 02:00" },
-  { d: "Domenica", h: "12:30 – 15:00 · 18:30 – 00:00" },
+  { d: "Domenica",  h: "12:30 – 15:00 · 18:30 – 00:00" },
 ];
 
 export default function Contact() {
-  const [sent, setSent] = useState(false);
+  const nameRef    = useRef<HTMLInputElement>(null);
+  const phoneRef   = useRef<HTMLInputElement>(null);
+  const dateRef    = useRef<HTMLInputElement>(null);
+  const guestsRef  = useRef<HTMLInputElement>(null);
+  const notesRef   = useRef<HTMLTextAreaElement>(null);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const name   = nameRef.current?.value   ?? "";
+    const phone  = phoneRef.current?.value  ?? "";
+    const date   = dateRef.current?.value   ?? "";
+    const guests = guestsRef.current?.value ?? "";
+    const notes  = notesRef.current?.value  ?? "";
+
+    // Formatta la data in italiano
+    let dataFormattata = date;
+    if (date) {
+      const d = new Date(date);
+      dataFormattata = d.toLocaleDateString("it-IT", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+    }
+
+    const msg = [
+      `🍔 *Richiesta prenotazione Buatt*`,
+      ``,
+      `👤 Nome: ${name}`,
+      phone ? `📞 Tel: ${phone}` : null,
+      `📅 Data: ${dataFormattata}`,
+      `👥 Ospiti: ${guests}`,
+      notes ? `📝 Note: ${notes}` : null,
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+    window.open(url, "_blank");
+  };
 
   return (
     <>
@@ -29,6 +66,7 @@ export default function Contact() {
 
       <section className="border-b-2 border-mocha bg-kraft py-20">
         <div className="mx-auto grid max-w-7xl gap-12 px-5 lg:grid-cols-[1fr_1.2fr] lg:gap-16 lg:px-10">
+
           {/* Info */}
           <div className="space-y-8">
             <img
@@ -38,11 +76,11 @@ export default function Contact() {
             />
 
             {[
-              { icon: MapPin, label: "DOVE SIAMO", lines: ["Via Roma", "84025 Eboli (SA)"], c: "bg-teal text-kraft-light" },
-              { icon: Phone, label: "TELEFONO", lines: ["351 904 2387", "WhatsApp disponibile"], c: "bg-mustard text-mocha" },
-              { icon: Mail, label: "EMAIL", lines: ["ciao@buatt.it", "eventi@buatt.it"], c: "bg-lemon text-mocha" },
+              { icon: MapPin,  label: "DOVE SIAMO", lines: ["Corso Umberto I, 16", "84025 Eboli (SA)"],      c: "bg-teal text-kraft-light" },
+              { icon: Phone,   label: "TELEFONO",   lines: ["334 190 6133", "WhatsApp disponibile"],         c: "bg-mustard text-mocha" },
             ].map((b, i) => (
-              <div key={b.label} className={`border-2 border-mocha p-5 shadow-soft ${b.c}`} style={{ transform: `rotate(${i % 2 === 0 ? -1 : 1}deg)` }}>
+              <div key={b.label} className={`border-2 border-mocha p-5 shadow-soft ${b.c}`}
+                style={{ transform: `rotate(${i % 2 === 0 ? -1 : 1}deg)` }}>
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center border-2 border-current">
                     <b.icon size={18} />
@@ -75,78 +113,73 @@ export default function Contact() {
             <span className="stamp text-brick">modulo prenotazione</span>
             <h2 className="mt-5 font-display text-4xl leading-none">UN TAVOLO PER TE.</h2>
             <p className="mt-3 font-hand text-xl text-mocha">
-              Compila il modulo, ti confermiamo entro un'ora.
+              Compila e ti apriamo WhatsApp con il messaggio già pronto.
             </p>
             <div className="my-6 h-[3px] w-20 bg-brick" />
 
-            {sent ? (
-              <div className="border-2 border-mocha bg-mustard p-8 text-center shadow-soft rotate-n1">
-                <span className="stamp text-mocha">✓ ricevuto</span>
-                <h3 className="mt-4 font-display text-4xl text-mocha">GRAZIE!</h3>
-                <p className="mt-3 font-hand text-xl text-mocha">
-                  Ti ricontattiamo a breve.<br />Preparati a una bella serata.
-                </p>
-              </div>
-            ) : (
-              <form
-                onSubmit={(e) => { e.preventDefault(); setSent(true); }}
-                className="space-y-5"
-              >
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <Field label="NOME" name="name" required />
-                  <Field label="TELEFONO" name="phone" type="tel" required />
-                </div>
-                <Field label="EMAIL" name="email" type="email" required />
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <Field label="DATA" name="date" type="date" required />
-                  <Field label="OSPITI" name="guests" type="number" min="1" defaultValue="2" required />
-                </div>
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="grid gap-5 sm:grid-cols-2">
+                {/* Nome — obbligatorio */}
                 <div>
                   <label className="mb-2 block font-mono text-[10px] font-bold uppercase tracking-widest text-mocha">
-                    NOTE
+                    NOME <span className="text-brick">*</span>
                   </label>
-                  <textarea
-                    name="notes"
-                    rows={3}
-                    className="w-full border-2 border-mocha bg-kraft px-4 py-3 font-mono text-sm text-mocha placeholder:text-mocha/50 focus:bg-kraft-light focus:outline-none"
-                    placeholder="Allergie, occasione speciale…"
-                  />
+                  <input ref={nameRef} type="text" required
+                    className="w-full border-2 border-mocha bg-kraft px-4 py-3 font-mono text-sm text-mocha focus:bg-kraft-light focus:outline-none" />
                 </div>
-                <button
-                  type="submit"
-                  className="group inline-flex w-full items-center justify-center gap-3 border-2 border-mocha bg-hotpink px-8 py-4 font-display text-sm tracking-widest text-kraft-light shadow-soft transition-all hover:-translate-y-1 hover:shadow-hard"
-                >
-                  INVIA RICHIESTA
-                  <Send size={14} className="transition-transform group-hover:translate-x-1" />
-                </button>
-              </form>
-            )}
+                {/* Telefono — opzionale */}
+                <div>
+                  <label className="mb-2 block font-mono text-[10px] font-bold uppercase tracking-widest text-mocha">
+                    TELEFONO
+                  </label>
+                  <input ref={phoneRef} type="tel"
+                    className="w-full border-2 border-mocha bg-kraft px-4 py-3 font-mono text-sm text-mocha focus:bg-kraft-light focus:outline-none" />
+                </div>
+              </div>
+
+              <div className="grid gap-5 sm:grid-cols-2">
+                {/* Data — obbligatoria */}
+                <div>
+                  <label className="mb-2 block font-mono text-[10px] font-bold uppercase tracking-widest text-mocha">
+                    DATA <span className="text-brick">*</span>
+                  </label>
+                  <input ref={dateRef} type="date" required
+                    min={new Date().toISOString().split("T")[0]}
+                    className="w-full border-2 border-mocha bg-kraft px-4 py-3 font-mono text-sm text-mocha focus:bg-kraft-light focus:outline-none" />
+                </div>
+                {/* Ospiti — obbligatorio */}
+                <div>
+                  <label className="mb-2 block font-mono text-[10px] font-bold uppercase tracking-widest text-mocha">
+                    OSPITI <span className="text-brick">*</span>
+                  </label>
+                  <input ref={guestsRef} type="number" required min="1" max="50" defaultValue="2"
+                    className="w-full border-2 border-mocha bg-kraft px-4 py-3 font-mono text-sm text-mocha focus:bg-kraft-light focus:outline-none" />
+                </div>
+              </div>
+
+              {/* Note — opzionali */}
+              <div>
+                <label className="mb-2 block font-mono text-[10px] font-bold uppercase tracking-widest text-mocha">
+                  NOTE
+                </label>
+                <textarea ref={notesRef} rows={3}
+                  className="w-full border-2 border-mocha bg-kraft px-4 py-3 font-mono text-sm text-mocha placeholder:text-mocha/50 focus:bg-kraft-light focus:outline-none"
+                  placeholder="Allergie, occasione speciale, preferenze…" />
+              </div>
+
+              <button type="submit"
+                className="group inline-flex w-full items-center justify-center gap-3 border-2 border-mocha bg-[#25D366] px-8 py-4 font-display text-sm tracking-widest text-white shadow-soft transition-all hover:-translate-y-1 hover:shadow-hard">
+                PRENOTA SU WHATSAPP
+                <Send size={14} className="transition-transform group-hover:translate-x-1" />
+              </button>
+
+              <p className="text-center font-mono text-[10px] text-mocha/50">
+                Campi con <span className="text-brick">*</span> obbligatori · Email non richiesta
+              </p>
+            </form>
           </div>
         </div>
       </section>
     </>
-  );
-}
-
-function Field({
-  label, name, type = "text", required, min, defaultValue,
-}: {
-  label: string; name: string; type?: string; required?: boolean; min?: string; defaultValue?: string;
-}) {
-  return (
-    <div>
-      <label htmlFor={name} className="mb-2 block font-mono text-[10px] font-bold uppercase tracking-widest text-mocha">
-        {label}
-      </label>
-      <input
-        id={name}
-        name={name}
-        type={type}
-        required={required}
-        min={min}
-        defaultValue={defaultValue}
-        className="w-full border-2 border-mocha bg-kraft px-4 py-3 font-mono text-sm text-mocha focus:bg-kraft-light focus:outline-none"
-      />
-    </div>
   );
 }

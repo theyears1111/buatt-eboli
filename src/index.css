@@ -112,7 +112,7 @@
     from { transform: translateX(0); }
     to   { transform: translateX(-50%); }
   }
-  .marquee { animation: marquee 60s linear infinite; }
+  .marquee { animation: marquee 120s linear infinite; }
 
   .rotate-n2 { transform: rotate(-2deg); }
   .rotate-n1 { transform: rotate(-1deg); }
@@ -134,7 +134,13 @@
 ::-webkit-scrollbar-thumb:hover { background: var(--mustard); }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  /* Solo elementi UI, non i doodles SVG decorativi */
+  .transition-all,
+  .transition-colors,
+  .transition-transform,
+  .hover-lift,
+  .reveal,
+  .marquee {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }

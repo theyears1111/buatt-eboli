@@ -7,7 +7,7 @@ export function Footer() {
     <footer className="relative mt-24 bg-mocha text-kraft-light">
       <div className="overflow-hidden border-y-2 border-kraft-light/20 py-4">
         <div className="marquee flex whitespace-nowrap font-display text-2xl tracking-tight">
-          {Array.from({ length: 2 }).map((_, i) => (
+          {Array.from({ length: 6 }).map((_, i) => (
             <span key={i} className="flex shrink-0 items-center gap-10 px-10">
               <span>BUATT</span><span className="text-mustard">✺</span>
               <span className="font-hand normal-case">bistrò &amp; pub</span><span className="text-mustard">✺</span>
@@ -21,7 +21,9 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-5 py-20 lg:px-10">
         <div className="grid gap-16 md:grid-cols-12">
           <div className="md:col-span-5">
-            <img src={logoImg} alt="Buatt" className="h-16 w-auto object-contain brightness-0 invert" />
+            <div className="overflow-hidden" style={{ height: '120px' }}>
+              <img src={logoImg} alt="Buatt" className="brightness-0 invert" style={{ width: '320px', marginTop: '-22%', marginBottom: '-22%', height: 'auto', maxHeight: 'none' }} />
+            </div>
             <p className="mt-8 max-w-md font-hand text-2xl leading-snug normal-case">
               L'essenza non ha bisogno di filtri,{' '}
               <span className="text-mustard">ma di spazio.</span>

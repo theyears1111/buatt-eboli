@@ -20,7 +20,7 @@ const db = getFirestore(app);
 
 async function seed() {
   await setDoc(doc(db, 'ristoranti/buatt/admin/accesso'), {
-    utenti: ['admin@buatt.it'], // ← cambia con l'email reale del cliente
+    utenti: ['buatteboli@gmail.com'], // ← cambia con l'email reale del cliente
   });
   console.log('✅ Admin accessi Buatt configurati');
   process.exit(0);

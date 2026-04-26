@@ -116,7 +116,7 @@ export default function Home() {
       {/* MARQUEE */}
       <section className="overflow-hidden border-y-2 border-mocha bg-brick py-4">
         <div className="marquee flex whitespace-nowrap font-display text-2xl tracking-[0.15em] text-kraft-light">
-          {Array.from({ length: 2 }).map((_, i) => (
+          {Array.from({ length: 6 }).map((_, i) => (
             <span key={i} className="flex shrink-0 items-center gap-10 px-10">
               <span>GLOBAL</span><span>✺</span>
               <span>STREET</span><span>✺</span>
