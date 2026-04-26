@@ -1,78 +1,92 @@
-import heroImg from "../assets/hero.jpg";
-import burgerImg from "../assets/dish-burger.jpg";
-import gnoccoImg from "../assets/dish-gnocco.jpg";
-import tagliataImg from "../assets/dish-tagliata.jpg";
-import bunImg from "../assets/dish-bun.jpg";
-import beerImg from "../assets/gallery-beer.jpg";
-import cocktailImg from "../assets/gallery-cocktail.jpg";
-import interiorImg from "../assets/gallery-interior.jpg";
-import liveImg from "../assets/gallery-live.jpg";
-import ingredientsImg from "../assets/gallery-ingredients.jpg";
 import posterWings from "../assets/poster-wings.jpg";
 import posterSecret from "../assets/poster-secret.jpg";
 import posterNesima from "../assets/poster-nesima.jpg";
 import posterNatale from "../assets/poster-natale.jpg";
 import posterConvivio from "../assets/poster-convivio.jpg";
-import posterPrenota from "../assets/poster-prenota.jpg";
+import { useFirestore } from "../admin/useFirestore";
+import { Calendar } from "lucide-react";
 
+interface EventoItem { titolo: string; data: string; desc: string; img: string }
 
-type Item = { src: string; alt: string; tag: "POSTER" | "PIATTO" | "AMBIENTE"; rot: number };
-
-const items: Item[] = [
-  { src: posterWings, alt: "Wings Brothers", tag: "POSTER", rot: -3 },
-  { src: burgerImg, alt: "Burger Buatt", tag: "PIATTO", rot: 2 },
-  { src: posterSecret, alt: "Global Street Local Soul", tag: "POSTER", rot: 1 },
-  { src: liveImg, alt: "Serata live", tag: "AMBIENTE", rot: -1.5 },
-  { src: posterNesima, alt: "Nesima Park", tag: "POSTER", rot: 2.5 },
-  { src: cocktailImg, alt: "Cocktail d'autore", tag: "PIATTO", rot: -2 },
-  { src: posterConvivio, alt: "Convivio", tag: "POSTER", rot: 1.5 },
-  { src: tagliataImg, alt: "Tagliata", tag: "PIATTO", rot: -1 },
-  { src: posterPrenota, alt: "Prenota", tag: "POSTER", rot: 3 },
-  { src: ingredientsImg, alt: "Materie prime", tag: "AMBIENTE", rot: -2 },
-  { src: posterNatale, alt: "Bun Natale", tag: "POSTER", rot: 2 },
-  { src: gnoccoImg, alt: "Gnocco fritto", tag: "PIATTO", rot: -1.5 },
-    { src: heroImg, alt: "Interno", tag: "AMBIENTE", rot: -2.5 },
-  { src: beerImg, alt: "Birra artigianale", tag: "PIATTO", rot: 1.5 },
-  { src: bunImg, alt: "Bun", tag: "PIATTO", rot: -1 },
-  { src: interiorImg, alt: "Sala Buatt", tag: "AMBIENTE", rot: 2 },
+// Poster statici di default sempre visibili
+const staticPosters = [
+  { src: posterWings,    alt: "Wings Brothers",  rot: -3  },
+  { src: posterSecret,   alt: "Secret Menu",     rot: 2   },
+  { src: posterNesima,   alt: "Nesima Park",     rot: 1   },
+  { src: posterNatale,   alt: "Bun Natale",      rot: -2  },
+  { src: posterConvivio, alt: "Convivio",        rot: 1.5 },
 ];
 
-const tagColors: Record<Item["tag"], string> = {
-  POSTER: "bg-hotpink text-kraft-light",
-  PIATTO: "bg-mustard text-mocha",
-  AMBIENTE: "bg-teal text-kraft-light",
-};
+export default function Events() {
+  const { data: evtData } = useFirestore<{ eventi: EventoItem[] }>('eventi', { eventi: [] });
+  const eventi = evtData.eventi ?? [];
 
-export default function Gallery() {
   return (
     <>
-      <section className="relative border-b-2 border-mocha bg-kraft-light">
+      <section className="relative border-b-2 border-mocha bg-hotpink">
         <div className="relative mx-auto max-w-7xl px-5 py-16 lg:px-10">
-          <span className="stamp text-brick">#archivio visivo</span>
-          <h1 className="mt-6 font-display text-6xl leading-[0.88] sm:text-7xl md:text-8xl">
-            SGUARDI<br /><span className="text-brick">DAL BUATT.</span>
+          <span className="stamp text-kraft-light">#what's on</span>
+          <h1 className="mt-6 font-display text-6xl leading-[0.88] text-kraft-light sm:text-7xl md:text-8xl">
+            EVENTI<br /><span className="text-mocha">& SERATE.</span>
           </h1>
-          <p className="mt-6 max-w-2xl font-hand text-3xl text-mocha">
-            Poster, piatti, serate.<br />Tutto quello che è passato di qui.
+          <p className="mt-6 font-hand text-3xl text-kraft-light">
+            Quello che succede qui dentro non resta qui dentro.
           </p>
         </div>
       </section>
 
-      <section className="border-b-2 border-mocha bg-kraft py-20">
+      {/* EVENTI DA FIREBASE */}
+      {eventi.length > 0 && (
+        <section className="border-b-2 border-mocha bg-kraft py-20">
+          <div className="mx-auto max-w-7xl px-5 lg:px-10">
+            <span className="font-mono text-xs uppercase tracking-[0.35em] text-brick">#prossimi eventi</span>
+            <h2 className="mt-3 mb-12 font-display text-4xl leading-none sm:text-5xl">IN ARRIVO.</h2>
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {eventi.map((ev, i) => {
+                const rots = [-2, 1.5, -1, 2, -1.5, 1];
+                return (
+                  <article
+                    key={i}
+                    className="border-2 border-mocha bg-kraft-light shadow-soft hover-lift"
+                    style={{ transform: `rotate(${rots[i % rots.length]}deg)` }}
+                  >
+                    {ev.img && (
+                      <div className="border-b-2 border-mocha overflow-hidden">
+                        <img src={ev.img} alt={ev.titolo} className="w-full object-cover aspect-[4/3]" />
+                      </div>
+                    )}
+                    <div className="p-5">
+                      {ev.data && (
+                        <div className="mb-2 flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-brick">
+                          <Calendar size={11} /> {ev.data}
+                        </div>
+                      )}
+                      <h3 className="font-display text-xl leading-tight text-mocha">{ev.titolo}</h3>
+                      {ev.desc && <p className="mt-2 font-sans text-sm text-mocha/70">{ev.desc}</p>}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* POSTER STORICI statici */}
+      <section className="border-b-2 border-mocha bg-kraft-light py-20">
         <div className="mx-auto max-w-7xl px-5 lg:px-10">
-          <div className="columns-1 gap-5 sm:columns-2 lg:columns-3 xl:columns-4">
-            {items.map((img, i) => (
+          <span className="font-mono text-xs uppercase tracking-[0.35em] text-brick">#archivio</span>
+          <h2 className="mt-3 mb-12 font-display text-4xl leading-none sm:text-5xl">LOCANDINE.</h2>
+          <div className="columns-1 gap-5 sm:columns-2 lg:columns-3">
+            {staticPosters.map((p, i) => (
               <figure
                 key={i}
-                className="group relative mb-5 inline-block w-full break-inside-avoid border-2 border-mocha bg-kraft-light shadow-soft transition-all hover:-translate-y-1 hover:shadow-hard reveal"
-                style={{ animationDelay: `${i * 0.04}s`, transform: `rotate(${img.rot}deg)` }}
+                className="mb-5 inline-block w-full break-inside-avoid border-2 border-mocha shadow-soft transition-all hover:-translate-y-1 hover:shadow-hard"
+                style={{ transform: `rotate(${p.rot}deg)` }}
               >
-                <img src={img.src} alt={img.alt} loading="lazy" className="block w-full" />
-                <figcaption className="flex items-center justify-between gap-2 border-t-2 border-mocha px-3 py-2">
-                  <span className={`border border-mocha px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-widest ${tagColors[img.tag]}`}>
-                    #{img.tag}
-                  </span>
-                  <span className="font-hand text-sm text-mocha">{img.alt}</span>
+                <img src={p.src} alt={p.alt} loading="lazy" className="block w-full" />
+                <figcaption className="border-t-2 border-mocha px-3 py-2 font-hand text-sm text-mocha">
+                  {p.alt}
                 </figcaption>
               </figure>
             ))}

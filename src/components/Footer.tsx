@@ -6,9 +6,9 @@ export function Footer() {
   return (
     <footer className="relative mt-24 bg-mocha text-kraft-light">
       <div className="overflow-hidden border-y-2 border-kraft-light/20 py-4">
-        <div className="marquee flex whitespace-nowrap font-display text-2xl tracking-tight">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <span key={i} className="flex shrink-0 items-center gap-10 px-10">
+        <div className="marquee-track whitespace-nowrap font-display text-2xl tracking-tight">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <span key={i} className="inline-flex items-center gap-10 px-10">
               <span>BUATT</span><span className="text-mustard">✺</span>
               <span className="font-hand normal-case">bistrò &amp; pub</span><span className="text-mustard">✺</span>
               <span>EBOLI</span><span className="text-mustard">✺</span>

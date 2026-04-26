@@ -112,7 +112,11 @@
     from { transform: translateX(0); }
     to   { transform: translateX(-50%); }
   }
-  .marquee { animation: marquee 120s linear infinite; }
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 40s linear infinite;
+  }
 
   .rotate-n2 { transform: rotate(-2deg); }
   .rotate-n1 { transform: rotate(-1deg); }

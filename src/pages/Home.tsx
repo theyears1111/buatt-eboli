@@ -15,6 +15,7 @@ import doodleDog from "../assets/doodle-dog.png";
 import doodleDancer from "../assets/doodle-dancer.png";
 import doodleStar from "../assets/doodle-star.png";
 import { DoodleFrogDuck, DoodleHippo, DoodleButterfly, DoodleBurger } from "../components/Doodles";
+import { useFirestore } from "../admin/useFirestore";
 
 const dishImages: Record<string, string> = {
   burger: burgerImg,
@@ -24,7 +25,21 @@ const dishImages: Record<string, string> = {
 };
 
 
+const staticReviews = [
+  { q: "Atmosfera incredibile, sembra di entrare in un altro mondo. Il Buatt è leggendario.", n: "Marco R.", c: "bg-mustard", r: -1.5 },
+  { q: "Cocktail curatissimi, musica giusta, materia prima top. Il mio posto del cuore.", n: "Giulia D.", c: "bg-hotpink", r: 1.5 },
+  { q: "Underground, intimo, gourmet. Serate live da paura e servizio impeccabile.", n: "Antonio P.", c: "bg-teal", r: -1 },
+];
+const revColors = ["bg-mustard", "bg-hotpink", "bg-teal", "bg-lemon", "bg-brick text-kraft-light"];
+const revRots   = [-1.5, 1.5, -1, 2, -1.5];
+
 export default function Home() {
+  const { data: recData } = useFirestore<{ recensioni: { q: string; n: string }[] }>(
+    'recensioni', { recensioni: [] }
+  );
+  const recensioni = (recData.recensioni?.length > 0)
+    ? recData.recensioni.map((r, i) => ({ ...r, c: revColors[i % revColors.length], r: revRots[i % revRots.length] }))
+    : staticReviews;
   return (
     <>
       {/* HERO — poster collage */}
@@ -115,9 +130,9 @@ export default function Home() {
 
       {/* MARQUEE */}
       <section className="overflow-hidden border-y-2 border-mocha bg-brick py-4">
-        <div className="marquee flex whitespace-nowrap font-display text-2xl tracking-[0.15em] text-kraft-light">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <span key={i} className="flex shrink-0 items-center gap-10 px-10">
+        <div className="marquee-track whitespace-nowrap font-display text-2xl tracking-[0.15em] text-kraft-light">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <span key={i} className="inline-flex items-center gap-10 px-10">
               <span>GLOBAL</span><span>✺</span>
               <span>STREET</span><span>✺</span>
               <span>LOCAL</span><span>✺</span>
@@ -259,11 +274,7 @@ export default function Home() {
             <h2 className="mt-3 font-display text-4xl sm:text-5xl">DICONO DI NOI</h2>
           </div>
           <div className="grid gap-8 md:grid-cols-3">
-            {[
-              { q: "Atmosfera incredibile, sembra di entrare in un altro mondo. Il Buatt è leggendario.", n: "Marco R.", c: "bg-mustard", r: -1.5 },
-              { q: "Cocktail curatissimi, musica giusta, materia prima top. Il mio posto del cuore.", n: "Giulia D.", c: "bg-hotpink", r: 1.5 },
-              { q: "Underground, intimo, gourmet. Serate live da paura e servizio impeccabile.", n: "Antonio P.", c: "bg-teal", r: -1 },
-            ].map((t, i) => (
+            {recensioni.map((t, i) => (
               <div
                 key={i}
                 className={`hover-lift relative border-2 border-mocha p-7 shadow-soft ${t.c} text-mocha`}
